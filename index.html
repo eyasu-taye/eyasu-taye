@@ -349,15 +349,24 @@ navToggle.addEventListener('click',()=>{
     </span>
 
             <ul>
-                <li>Operate, support, and troubleshoot <b>Nokia Converged Charging System (CCS)</b> across UAT and Production environments.</li>
+                <li>Operate, support, and troubleshoot <b>Nokia Converged Charging System (NCC)</b> across UAT and Production environments.</li>
                 <li>Trace incidents and maintain <b>API-driven microservices</b> supporting charging and mediation flows.</li>
                 <li>Build and maintain <b>Kubernetes-based containerized environments</b> for high availability and scalability.</li>
                 <li>Collaborate with <b>Managed Services and Care teams</b> to resolve incidents within agreed SLA.</li>
-                <li>Continuously improve system observability using <b>Prometheus and Grafana</b>.</li>
+                <li>Perform daily health check up on all kubernaties cluster, Continuously improve system observability using <b>Prometheus and Grafana</b>.</li>
+            </ul>
+
+              <ul>
+                <li>Operate, support, and troubleshoot <b>Nokia Mediation Data pipelines</b> across downstream production environments.</li>
+                <li>Trace incidents and maintain CDR and EDR data mediation flows.</li>
+                <li>Extract Transport and Load data from upstreams system to downstream systems.</li>
+                <li>Perform daily health check up and Maintain <b>VNF-based mediation environments</b> for high availability and scalability.</li>
+                <li>Continuously improve data flows observability using <b>Mediation stream processing</b>.</li>
             </ul>
 
             <div class="diagram">
-                Channels → API → Kafka → Nokia CCS → Aerospike
+               (Data,Voice,SMS, MMS) → SS7 → http2N40 → (Kubernetes-Cluster-Nokia OCS-Aerospike) → (Observability - Prometheus and Grafana)<br>
+               Upstreams(NCC, MMS) → Mediation → Downstreams(RAFM, DWH)
             </div>
         </div>
 
