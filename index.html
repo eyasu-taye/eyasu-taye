@@ -328,7 +328,12 @@ animation:pentagonEdgeFlow 4s linear infinite; /* faster */
 .project {
   transition: transform .3s ease, box-shadow .3s ease;
 }
-#design-philosophy:hover {
+
+#edu:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(56,189,248,.15);
+}
+#Engineering-Philosophy:hover {
   transform: translateY(-6px);
   box-shadow: 0 20px 40px rgba(56,189,248,.15);
 }
@@ -751,7 +756,7 @@ navToggle.addEventListener('click',()=>{
         </div>
     </section>
     <!-- ================= PHILOSOPHY ================= -->
-    <div class="card">
+    <div class="card" id="Engineering-Philosophy">
         <h2>Engineering Philosophy</h2>
         <ul>
             <li>Business-first system design</li>
