@@ -5,6 +5,8 @@
     <title>Eyasu Taye | Software • DevOps • Full-Stack Engineer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 
     <style>
         :root{
@@ -275,6 +277,31 @@ navToggle.addEventListener('click',()=>{
 });
 
     </script>
+    <script>
+        function downloadCV() {
+           document.getElementById("perinfo").style.display = "block";
+<!--          const element = document.body; // or document.getElementById("cv-root")-->
+              const element = document.getElementById("cv-root");
+          const options = {
+            margin:       0.5,
+            filename:     'Eyasu_Taye_CV.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  {
+              scale: 2,
+              useCORS: true,
+              scrollY: 0
+            },
+            jsPDF:        {
+              unit: 'in',
+              format: 'a4',
+              orientation: 'portrait'
+            }
+          };
+
+          html2pdf().set(options).from(element).save();
+        }
+    </script>
+
 </head>
 
 <body id="impact-overview">
@@ -288,11 +315,13 @@ navToggle.addEventListener('click',()=>{
         <div class="nav-logo">Eyasu Taye</div>
         <ul class="nav-links">
             <li><a href="#impact-overview">Impact</a></li>
+            <li><a href="#edu">Education</a></li>
             <li><a href="#skills">Skills</a></li>
             <li><a href="#projects">Projects</a></li>
             <li><a href="#experience">Experience</a></li>
             <li><a href="#design-philosophy">How I Design Systems</a></li>
-            <li><a href="#download">Download CV</a></li>
+            <li><a href="#download" onclick="downloadCV()"> Download CV </a> </li>
+
         </ul>
         <button class="nav-toggle">☰</button>
     </div>
@@ -321,9 +350,23 @@ navToggle.addEventListener('click',()=>{
 
         </div>
     </div>
+    <div id="cv-root">
+        <!-- ================= Personal Info ================= -->
+    <div class="card" id="perinfo" style="display:none">
+        <h2>Eyasu Taye </h2>
 
+        <div class="badges">
+            <span>Eyasu Taye Aemro</span><span>Phone</span><span>0710542424 / 0920763937</span>
+        </div>
+    </div>
+    <!-- ================= Education ================= -->
+    <div class="card" id="edu">
+        <h2>Eduction</h2>
 
-
+        <div class="badges">
+            <span>BSc</span><span>Computer Science</span><span>Addis Ababa University</span>
+        </div>
+    </div>
     <!-- ================= SKILLS ================= -->
 
     <div class="card" id="skills">
@@ -386,7 +429,7 @@ navToggle.addEventListener('click',()=>{
 
             <div class="diagram">
                 CNF Infr: Baremetal Servers → OS → (Docker Engine, containerd) or (Broadcom) → VNF → Kubernetes clusters → Pods-containers → Applications → Prometheus → Grafana<br>
-                VNF Infr: Baremetal Servers → Broadcom → VNF → Kubernetes clusters → Pods-containers → Applications → Prometheus → Grafana<br> 
+                VNF Infr: Baremetal Servers → Broadcom → VNF → Kubernetes clusters → Pods-containers → Applications → Prometheus → Grafana<br>
                 DevOps: git → (GitHub, GitLab) → (Docker Registry, Artifact repository) → (Testing Env, Dev Env, Prod - On-Prem or Cloud)
             </div>
         </div>
@@ -431,7 +474,7 @@ navToggle.addEventListener('click',()=>{
 
     <!-- ================= PROJECTS ================= -->
 
-    <section>
+    <section class="card">
         <h2 id="projects">Selected Engineering Projects</h2>
 
         <!-- PROJECT 1 -->
@@ -542,7 +585,6 @@ navToggle.addEventListener('click',()=>{
             </div>
         </div>
     </section>
-
 
     <!-- ================= PHILOSOPHY ================= -->
 
@@ -677,5 +719,6 @@ navToggle.addEventListener('click',()=>{
     }
 </script>
 
+</div>
 </body>
 </html>
