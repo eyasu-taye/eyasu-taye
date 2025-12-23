@@ -366,7 +366,7 @@ navToggle.addEventListener('click',()=>{
 
             <div class="diagram">
                OCS: (Data,Voice,SMS, MMS) → SS7 → http2N40 → (Kubernetes-Cluster-Nokia OCS-Aerospike) → (Observability - Prometheus and Grafana)<br>
-               Mediation: Upstreams(NCC, MMS) → Mediation → Downstreams(RAFM, DWH)
+               Mediation: Upstreams(NCC, MMS,USSD, TRUETEQ) → Mediation(CGW, NCC, CON) → Downstreams(RAFM, DWH, DMZ, 6D, BI, BigData)
             </div>
         </div>
 
@@ -405,7 +405,8 @@ navToggle.addEventListener('click',()=>{
             </ul>
 
             <div class="diagram">
-                Clients → Spring Boot APIs → ETL → Databases
+                Datawarehouse and ETL → Databases → ML Model Trainings<br>
+                Datawarehouse and ETL → BigData analytics<br>
             </div>
         </div>
 
