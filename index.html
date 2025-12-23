@@ -365,8 +365,8 @@ navToggle.addEventListener('click',()=>{
             </ul>
 
             <div class="diagram">
-               (Data,Voice,SMS, MMS) → SS7 → http2N40 → (Kubernetes-Cluster-Nokia OCS-Aerospike) → (Observability - Prometheus and Grafana)<br>
-               Upstreams(NCC, MMS) → Mediation → Downstreams(RAFM, DWH)
+               OCS: (Data,Voice,SMS, MMS) → SS7 → http2N40 → (Kubernetes-Cluster-Nokia OCS-Aerospike) → (Observability - Prometheus and Grafana)<br>
+               Mediation: Upstreams(NCC, MMS) → Mediation → Downstreams(RAFM, DWH)
             </div>
         </div>
 
@@ -385,7 +385,9 @@ navToggle.addEventListener('click',()=>{
             </ul>
 
             <div class="diagram">
-                Servers → Docker → Kubernetes → Prometheus → Grafana
+                CNF Infr: Baremetal Servers → OS → (Docker Engine, containerd) or (Broadcom) → VNF → Kubernetes clusters → Pods-containers → Applications → Prometheus → Grafana
+                VNF Infr: Baremetal Servers → Broadcom → VNF → Kubernetes clusters → Pods-containers → Applications → Prometheus → Grafana 
+                DevOps: git → (GitHub, GitLab) → (Docker Registry, Artifact repository) → (Testing Env, Dev Env, Prod - On-Prem or Cloud)
             </div>
         </div>
 
