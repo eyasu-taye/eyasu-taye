@@ -98,8 +98,8 @@
 /* Container (NOT clipped) */
 .pentagon-container{
   position:relative;
-  width:280px;
-  height:280px;
+  width:350px;
+  height:350px;
 }
 
 /* Shape only */
@@ -241,16 +241,65 @@
     display:block;
   }
 }
+        .pentagon-edge-anim{
+  position:absolute;
+  inset:0;
+  z-index:2;           /* above shape, below labels */
+  pointer-events:none;
+}
 
-    </style>
-    <script>
-        function filterProjects(tag){
-  document.querySelectorAll('.pentagon-label')
-    .forEach(l=>l.classList.toggle('active', l.dataset.filter===tag));
+.pentagon-edge-anim polygon{
+  fill:none;
+  stroke:#00e5ff;
+  stroke-width:1.5;
+  stroke-linecap:round;
 
-  document.querySelectorAll('.project').forEach(p=>{
-    p.style.display = p.classList.contains(tag) ? 'block' : 'none';
-  });
+  /* one glowing segment */
+  stroke-dasharray:0.2 0.8;
+  stroke-dashoffset:1;
+
+  filter:drop-shadow(0 0 6px #00e5ff);
+
+  animation:pentagonEdgeFlow 4.5s linear infinite;
+}
+
+/* Clockwise edge hit */
+@keyframes pentagonEdgeFlow{
+  0%   { stroke-dashoffset:1; stroke-width:1.5; }
+  20%  { stroke-width:2; }
+  40%  { stroke-width:1.5; }
+  60%  { stroke-width:2; }
+  80%  { stroke-width:1.5; }
+  100% { stroke-dashoffset:0; stroke-width:1.5; }
+}
+.pentagon-container:hover .pentagon-edge-anim polygon{
+  animation-play-state:paused;
+}
+animation:pentagonEdgeFlow 4s linear infinite; /* faster */
+<!--new-->
+        .pentagon-edge-anim{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+}
+
+#pentagonStroke{
+  fill:none;
+  stroke:#22d3ee;
+  stroke-width:3;
+  stroke-linecap:round;
+
+  stroke-dasharray:1 4;
+  stroke-dashoffset:5;
+
+  filter:drop-shadow(0 0 8px currentColor);
+  animation:edgeCycle 6s linear infinite;
+}
+
+@keyframes edgeCycle{
+  from { stroke-dashoffset:5; }
+  to   { stroke-dashoffset:0; }
 }
 #design-philosophy h3{
   color:#00e5ff;
@@ -268,6 +317,91 @@
   border-left:4px solid #00e5ff;
   border-radius:10px;
 }
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.97); }
+}
+
+.pentagon-shape {
+  animation: pulse 6s ease-in-out infinite;
+}
+.project {
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.project:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(56,189,248,.15);
+}
+.nav-links a.active {
+  color: #38bdf8;
+  border-bottom: 2px solid #38bdf8;
+}
+
+    </style>
+    <script>
+        const sections = document.querySelectorAll('section, .card');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(sec => {
+    if (pageYOffset >= sec.offsetTop - 120) {
+      current = sec.id;
+    }
+  });
+
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === `#${current}`);
+  });
+});
+
+    </script>
+    <script>
+        const stroke = document.getElementById("pentagonStroke");
+
+        /* edge index → color */
+        const edgeColors = [
+          "#22d3ee", // APIs
+          "#4ade80", // DevOps
+          "#facc15", // Data
+          "#fb7185", // Telecom
+          "#a78bfa"  // System
+        ];
+
+        let currentEdge = 0;
+
+        /* Animate color with edge flow */
+        setInterval(() => {
+          stroke.style.stroke = edgeColors[currentEdge];
+          stroke.style.color = edgeColors[currentEdge];
+          currentEdge = (currentEdge + 1) % 5;
+        }, 1200); // syncs with animation speed
+
+        /* Hover sync from labels */
+        document.querySelectorAll(".pentagon-label").forEach((label, i) => {
+          label.addEventListener("mouseenter", () => {
+            stroke.style.animationPlayState = "paused";
+            stroke.style.stroke = edgeColors[i];
+            stroke.style.color = edgeColors[i];
+          });
+
+          label.addEventListener("mouseleave", () => {
+            stroke.style.animationPlayState = "running";
+          });
+        });
+    </script>
+
+    <script>
+        function filterProjects(tag){
+  document.querySelectorAll('.pentagon-label')
+    .forEach(l=>l.classList.toggle('active', l.dataset.filter===tag));
+
+  document.querySelectorAll('.project').forEach(p=>{
+    p.style.display = p.classList.contains(tag) ? 'block' : 'none';
+  });
+}
+
 
         const navToggle = document.querySelector('.nav-toggle');
 const navLinks = document.querySelector('.nav-links');
@@ -333,6 +467,22 @@ navToggle.addEventListener('click',()=>{
         <div class="pentagon-container">
             <!-- SHAPE ONLY -->
             <div class="pentagon-shape"></div>
+            <svg class="pentagon-edge-anim" viewBox="0 0 100 100">
+                <polygon
+                        points="50,0 100,38 82,100 18,100 0,38"
+                        pathLength="1"
+                />
+            </svg>
+            <svg class="pentagon-edge-anim" viewBox="0 0 100 100">
+                <polygon
+                        id="pentagonStroke"
+                        points="50,0 100,38 82,100 18,100 0,38"
+                        pathLength="5"
+                />
+            </svg>
+
+
+
 
             <!-- CENTER CONTENT -->
             <div class="pentagon-center">
@@ -585,9 +735,7 @@ navToggle.addEventListener('click',()=>{
             </div>
         </div>
     </section>
-
     <!-- ================= PHILOSOPHY ================= -->
-
     <div class="card">
         <h2>Engineering Philosophy</h2>
         <ul>
@@ -598,12 +746,9 @@ navToggle.addEventListener('click',()=>{
             <li>Ownership mindset from code to production</li>
         </ul>
     </div>
-
 </div>
-
 <section id="design-philosophy" class="card">
     <h2>How I Design Systems</h2>
-
     <div class="design-block">
         <h3>1️⃣ Start With the Problem, Not the Technology</h3>
         <p>I begin by understanding:</p>
@@ -616,7 +761,6 @@ navToggle.addEventListener('click',()=>{
             Only after this do I choose technologies. This avoids over-engineering and ensures the system delivers real value.
         </p>
     </div>
-
     <div class="design-block">
         <h3>2️⃣ Design for Reliability First (SRE Mindset)</h3>
         <p>My default assumption is simple: <b>things will fail</b>.</p>
@@ -634,7 +778,6 @@ navToggle.addEventListener('click',()=>{
 <!--        </ul>-->
         <p>A system is not “done” until it is observable in production.</p>
     </div>
-
     <div class="design-block">
         <h3>3️⃣ Microservices Where They Make Sense</h3>
         <p>I use microservices deliberately, not blindly.</p>
@@ -652,7 +795,6 @@ navToggle.addEventListener('click',()=>{
             <li>CI/CD pipelines for safe releases</li>
         </ul>
     </div>
-
     <div class="design-block">
         <h3>4️⃣ Infrastructure as Code & Automation by Default</h3>
         <p>Manual systems do not scale — automation does.</p>
@@ -664,7 +806,6 @@ navToggle.addEventListener('click',()=>{
 <!--        </ul>-->
         <p>This reduces human error and increases confidence in change.</p>
     </div>
-
     <div class="design-block">
         <h3>5️⃣ Security, Stability, and N-1 Readiness</h3>
         <p>Especially in telecom and national systems, stability is critical.</p>
@@ -676,7 +817,6 @@ navToggle.addEventListener('click',()=>{
 <!--        </ul>-->
         <p>Security is a design requirement, not an afterthought.</p>
     </div>
-
     <div class="design-block">
         <h3>6️⃣ Design With Operations in Mind</h3>
         <p>I design systems I would be comfortable operating at <b>2 AM</b>.</p>
@@ -688,7 +828,6 @@ navToggle.addEventListener('click',()=>{
 <!--        </ul>-->
         <p>This mindset comes from real production support experience.</p>
     </div>
-
     <div class="design-block">
         <h3>7️⃣ Evolve, Don’t Rewrite</h3>
 <!--        <ul>-->
@@ -698,7 +837,6 @@ navToggle.addEventListener('click',()=>{
 <!--        </ul>-->
         <p>This minimizes risk while enabling continuous innovation.</p>
     </div>
-
     <div class="design-summary">
         <h3>🧩 How This Shows Up in My Work</h3>
         <ul>
@@ -710,15 +848,12 @@ navToggle.addEventListener('click',()=>{
         </ul>
     </div>
 </section>
-
-
 <script>
     function toggleDetails(el){
       const d = el.nextElementSibling;
       d.style.display = d.style.display === 'block' ? 'none' : 'block';
     }
 </script>
-
 </div>
 </body>
 </html>
