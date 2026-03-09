@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blockchain Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; background:#f4f6f8; margin:0; padding:20px; }
+        h1 { margin-bottom: 5px; }
+        .grid { display:grid; grid-template-columns: 1fr 1fr; gap:20px; }
+        .card { background:#fff; padding:15px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,.1); }
+        .block { border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:6px; }
+        button { padding:8px 12px; border:none; border-radius:6px; cursor:pointer; background:#2563eb; color:white; }
+        button.secondary { background:#64748b; }
+        input { padding:6px; width:100%; margin-bottom:6px; }
+        small { color:#555; }
+        pre { background:#0f172a; color:#e5e7eb; padding:10px; border-radius:6px; overflow:auto; }
+    </style>
+</head>
+<body>
+
+<h1>🧱 Blockchain Demo Web App</h1>
+<small>Educational demo: Hash • Block • Blockchain • Distributed Nodes • Tokens • Coinbase</small>
+
+<div class="grid">
+    <div class="card">
+        <h3>Create Transaction</h3>
+        <input id="from" placeholder="From (wallet)" />
+        <input id="to" placeholder="To (wallet)" />
+        <input id="amount" type="number" placeholder="Amount" />
+        <button onclick="addTransaction()">Add Transaction</button>
+        <pre id="txPool"></pre>
+    </div>
+
+    <div class="card">
+        <h3>Mine Block (Coinbase Reward)</h3>
+        <input id="miner" placeholder="Miner Address" />
+        <button onclick="mineBlock()">⛏️ Mine</button>
+        <p>Reward: <b>50 Tokens</b></p>
+    </div>
+</div>
+
+<br />
+
+<div class="card">
+    <h3>Blockchain</h3>
+    <div id="chain"></div>
+</div>
+
+<br />
+
+<div class="card">
+    <h3>Distributed Nodes (Simulation)</h3>
+    <button class="secondary" onclick="syncNodes()">Sync Nodes</button>
+    <pre id="nodes"></pre>
+</div>
+
+<script>
+    // ---------- Simple Hash Function ----------
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // ---------- Blockchain Structures ----------
+    class Block {
+      constructor(index, timestamp, transactions, previousHash) {
+        this.index = index;
+        this.timestamp = timestamp;
+        this.transactions = transactions;
+        this.previousHash = previousHash;
+        this.nonce = 0;
+        this.hash = '';
+      }
+    }
+
+    class Blockchain {
+      constructor() {
+        this.chain = [];
+        this.difficulty = 3;
+        this.pendingTransactions = [];
+        this.createGenesisBlock();
+      }
+
+      async createGenesisBlock() {
+        const genesis = new Block(0, Date.now(), ['Genesis Block'], '0');
+        genesis.hash = await sha256('genesis');
+        this.chain.push(genesis);
+        render();
+      }
+
+      async minePendingTransactions(miner) {
+        // Coinbase transaction
+        this.pendingTransactions.push({ from: 'COINBASE', to: miner, amount: 50 });
+
+        const block = new Block(
+          this.chain.length,
+          Date.now(),
+          this.pendingTransactions,
+          this.chain[this.chain.length - 1].hash
+        );
+
+        // Proof of Work
+        while (true) {
+          block.hash = await sha256(block.index + block.timestamp + JSON.stringify(block.transactions) + block.previousHash + block.nonce);
+          if (block.hash.startsWith('0'.repeat(this.difficulty))) break;
+          block.nonce++;
+        }
+
+        this.chain.push(block);
+        this.pendingTransactions = [];
+      }
+    }
+
+    // ---------- App State ----------
+    const blockchain = new Blockchain();
+    const nodes = [[], [], []]; // distributed copies
+
+    // ---------- UI Actions ----------
+    function addTransaction() {
+      const from = document.getElementById('from').value;
+      const to = document.getElementById('to').value;
+      const amount = Number(document.getElementById('amount').value);
+
+      blockchain.pendingTransactions.push({ from, to, amount });
+      render();
+    }
+
+    async function mineBlock() {
+      const miner = document.getElementById('miner').value || 'anonymous-miner';
+      await blockchain.minePendingTransactions(miner);
+      render();
+    }
+
+    function syncNodes() {
+      nodes.forEach((n, i) => nodes[i] = JSON.parse(JSON.stringify(blockchain.chain)));
+      document.getElementById('nodes').textContent = JSON.stringify(nodes, null, 2);
+    }
+
+    // ---------- Render ----------
+    function render() {
+      document.getElementById('txPool').textContent = JSON.stringify(blockchain.pendingTransactions, null, 2);
+
+      const chainDiv = document.getElementById('chain');
+      chainDiv.innerHTML = '';
+
+      blockchain.chain.forEach(b => {
+        const div = document.createElement('div');
+        div.className = 'block';
+        div.innerHTML = `
+          <b>Block #${b.index}</b><br>
+          <small>Hash:</small> ${b.hash}<br>
+          <small>Prev:</small> ${b.previousHash}<br>
+          <small>Nonce:</small> ${b.nonce}<br>
+          <small>Tx:</small>
+          <pre>${JSON.stringify(b.transactions, null, 2)}</pre>
+        `;
+        chainDiv.appendChild(div);
+      });
+    }
+</script>
+
+</body>
+</html>
